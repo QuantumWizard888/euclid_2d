@@ -13,8 +13,11 @@ Small particles simulation sandbox with physics. Created using Pygame.
 * Pause simulation
 
 ### 📚 How to use
-
-Just run the script:
+Install Pygame:
+```
+pip install pygame
+```
+And then run the script:
 
 ```
 python3 euclid_2d.py
