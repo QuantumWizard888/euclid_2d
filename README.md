@@ -4,7 +4,7 @@
 
 [![Demo](https://github.com/QuantumWizard888/euclid_2d/blob/main/demo.mp4)](https://github.com/QuantumWizard888/euclid_2d/blob/main/demo.mp4)
 
-Small particles simulation with physics. Created using Pygame.
+Small particles simulation sandbox with physics. Created using Pygame.
 
 ### ⭐ Feautures
 * Multiple particles creation with collision physics
