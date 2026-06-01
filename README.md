@@ -2,7 +2,7 @@
 
 ## ⚛️ Simple particles simulation sandbox
 
-[![Demo](https://github.com/QuantumWizard888/euclid_2d/blob/main/demo_thumb.PNG)](https://github.com/QuantumWizard888/euclid_2d/blob/main/demo.mp4)
+[![Demo](https://github.com/QuantumWizard888/euclid_2d/blob/main/demo.mp4)](https://github.com/QuantumWizard888/euclid_2d/blob/main/demo.mp4)
 
 Small particles simulation with physics. Created using Pygame.
 
