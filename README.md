@@ -1,9 +1,8 @@
 # Euclid 2D
 
 ## ⚛️ Simple particles simulation sandbox
-<video width="640" height="360" controls>
-  <source src="demo.mp4" type="video/mp4">
-</video>
+
+[![Demo](https://github.com/QuantumWizard888/euclid_2d/blob/main/demo_thumb.PNG)](https://github.com/QuantumWizard888/euclid_2d/blob/main/demo.mp4)
 
 Small particles simulation with physics. Created using Pygame.
 
