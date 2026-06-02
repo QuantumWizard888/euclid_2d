@@ -13,6 +13,7 @@ particle_drawing = False
 particle_create_static_mode = False
 particle_gravity = False
 gravity = 0.9
+particle_velocity_thermal_mode = False
 
 # <--- Check if the engine is stopping
 def check_engine_events(particles: list):
@@ -22,6 +23,7 @@ def check_engine_events(particles: list):
     global particle_drawing
     global particle_create_static_mode
     global particle_gravity
+    global particle_velocity_thermal_mode
 
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN and engine_is_running:
@@ -81,16 +83,18 @@ def check_engine_events(particles: list):
             elif event.key == pygame.K_g:
                 particle_gravity = not particle_gravity
                 print("[LOG] GRAVITY with Particle mode ENABLED") if particle_gravity else print("[LOG] GRAVITY with Particle mode ENABLED")
+            elif event.key == pygame.K_t:
+                particle_velocity_thermal_mode = not particle_velocity_thermal_mode
+                print("[LOG] VELOCITY THERMAL mode for Particle ENABLED") if particle_velocity_thermal_mode else print("[LOG] VELOCITY THERMAL mode for Particle DISABLED")
 
 # <--- Class: Particle
 class Particle():
 
     def __init__(self, pos_x, pos_y, move_mode="dynamic"):
-        self.colour = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+        self.colour = [random.randint(0,255), random.randint(0,255), random.randint(0,255)]
         self.radius = random.randint(5, 10)
         if move_mode == "static":
             self.radius = 15
-        #self.position = [random.randint(self.radius, screen_width - self.radius), random.randint(self.radius, screen_height - self.radius)]
         self.pos_x = pos_x
         self.pos_y = pos_y
         if move_mode == "dynamic":
@@ -176,7 +180,7 @@ def menu_screen(data_queue: Queue):
     pygame.init()
     menu_screen_bg_colour = (28, 61, 71)
     menu_screen_width = 290
-    menu_screen_height = 350
+    menu_screen_height = 410
     menu_screen = pygame.display.set_mode((menu_screen_width, menu_screen_height))
     font = pygame.font.SysFont("Calibri", 18)
     clock = pygame.time.Clock()
@@ -195,13 +199,15 @@ def menu_screen(data_queue: Queue):
         font_particle_create_static_draw_mode = font.render(f"Particle create static draw mode: {sim_data[2]}", True, (255,255,255))
         font_particle_create_static_mode = font.render(f"Particle create static mode: {sim_data[3]}", True, (255,255,255))
         font_particle_gravity_mode = font.render(f"Particle gravity mode: {sim_data[4]}", True, (255,255,255))
-        font_menu_help = font.render(f"--- HELP ---\nM - Particle create multi mode\nD - Particle create static draw mode\nS - Particle create static mode\nG - Particle gravity mode\nP - Pause/Continue simulation\nC - Clear simulatien screen\nESC - Exit", True, (255,255,255))
+        font_particle_velocity_thermal_mode = font.render(f"Particle velocity thermal mode: {sim_data[5]}", True, (255,255,255))
+        font_menu_help = font.render(f"--- HELP ---\nM - Particle create multi mode\nD - Particle create static draw mode\nS - Particle create static mode\nG - Particle gravity mode\nT - Particle velocity thermal mode\nP - Pause/Continue simulation\nC - Clear simulation screen\nESC - Exit", True, (255,255,255))
         menu_screen.blit(font_particles, (5, 10))
         menu_screen.blit(font_particle_create_multi_mode, (5, 40))
         menu_screen.blit(font_particle_create_static_draw_mode, (5, 65))
         menu_screen.blit(font_particle_create_static_mode, (5, 90))
         menu_screen.blit(font_particle_gravity_mode, (5, 115))
-        menu_screen.blit(font_menu_help, (5, 145))
+        menu_screen.blit(font_particle_velocity_thermal_mode, (5, 140))
+        menu_screen.blit(font_menu_help, (5, 165))
         pygame.display.flip()
         clock.tick(60)
         pygame.display.set_caption(f"Euclid 2D")
@@ -233,6 +239,13 @@ if __name__ == "__main__":
             grid_cell = {}
 
             for p in particles:
+                # <--- Thermal colouring based on particle velocity
+                if particle_velocity_thermal_mode:
+                    velocity_magnitude = math.sqrt(p.velocity_x**2 + p.velocity_y**2)
+                    velocity_normalized = min(velocity_magnitude/10, 1)
+                    p.colour[0] = int(255*velocity_normalized)
+                    p.colour[1] = 0
+                    p.colour[2] = int(255*(1-velocity_normalized))
                 p.p_move()
                 cell_p = (int(p.pos_x//60), int(p.pos_y//60))
                 if cell_p not in grid_cell:
@@ -253,7 +266,7 @@ if __name__ == "__main__":
             pygame.display.flip()
             clock.tick(60)
             # <--- Send data to Menu window process through queue
-            data_queue.put([len(particles), particle_create_multi_mode, particle_create_static_draw_mode, particle_create_static_mode, particle_gravity])
+            data_queue.put([len(particles), particle_create_multi_mode, particle_create_static_draw_mode, particle_create_static_mode, particle_gravity, particle_velocity_thermal_mode])
             # <--- Simulation window header info
             pygame.display.set_caption(f"Euclid 2D Simulation FPS: {round(clock.get_fps(), 3)}, Max FPS Diff: {round(fps_diff, 3)}% Particles: {len(particles)}")
             # <--- FPS diff info in the Simulation window header
