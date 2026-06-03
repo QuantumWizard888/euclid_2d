@@ -8,7 +8,7 @@ Small particles simulation sandbox with physics. Created using Pygame.
 * Multiple particles creation with collision physics
 * Gravity mode
 * Thermal velocity mode where particle colour depends on its velocity
-* Single particle that contols by a mouse and can be used as a "hammer" for other particles
+* Push other particles with manual single particle control
 * Pause simulation
 
 ### 📚 How to use
