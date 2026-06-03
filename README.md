@@ -10,6 +10,7 @@ Small particles simulation sandbox with physics. Created using Pygame.
 * Thermal velocity mode where particle colour depends on its velocity
 * Push other particles with manual single particle control
 * Pause simulation
+* Night mode for GUI
 
 ### 📚 How to use
 Install Pygame:
