@@ -4,7 +4,9 @@
 
 Small particles simulation sandbox with physics. Created using Pygame.
 
-[Demo.mp4](https://files.catbox.moe/vy2qcs.mp4)
+[Demonstration video #1](https://files.catbox.moe/vy2qcs.mp4)
+
+[Demonstration video #2](https://files.catbox.moe/5zxw5e.mp4)
 
 ### ⭐ Feautures
 * Multiple particles creation with collision physics
