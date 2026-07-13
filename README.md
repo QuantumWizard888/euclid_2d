@@ -28,4 +28,4 @@ python3 euclid_2d.py
 ```
 
 ### 💡📌 To Do
-* Add liquid simulation
+* Add fluid simulation
