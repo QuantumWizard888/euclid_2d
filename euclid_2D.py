@@ -1,3 +1,4 @@
+from datetime import datetime
 import math
 from multiprocessing import Process, Queue
 import os
@@ -17,7 +18,7 @@ particle_velocity_thermal_mode = False
 night_mode = False
 
 # <--- Check if the engine is stopping
-def check_engine_events(particles: list):
+def check_engine_events(particles: list, screen):
     global engine_is_running
     global particle_create_multi_mode
     global particle_create_static_draw_mode
@@ -91,6 +92,10 @@ def check_engine_events(particles: list):
             elif event.key == pygame.K_n:
                 night_mode = not night_mode
                 print("[LOG] NIGHT MODE ENABLED") if night_mode else print("[LOG] NIGHT MODE DISABLED")
+            elif event.key == pygame.K_PRINTSCREEN:
+                name = f"euclid2d_screenshot_{datetime.now().strftime("%Y%m%d%H%M%S")}.png"
+                pygame.image.save(screen, name)
+                print(f"[LOG] SIMULATION SCREEN screenshot was made!")
 
 # <--- Class: Particle
 class Particle():
@@ -236,7 +241,7 @@ if __name__ == "__main__":
     fps_diff = 0
     # <--- Main game engine loop
     while True:
-        check_engine_events(particles=particles)
+        check_engine_events(particles=particles, screen=screen)
         # <--- Night mode for GUI on/off
         if night_mode:
             screen_bg_colour = (22, 25, 28)
