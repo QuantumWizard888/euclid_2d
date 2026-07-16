@@ -85,7 +85,7 @@ def check_engine_events(particles: list, screen):
                 print("[LOG] STATIC Particle mode ENABLED") if particle_create_static_mode else print("[LOG] STATIC Particle mode DISABLED")
             elif event.key == pygame.K_g:
                 particle_gravity = not particle_gravity
-                print("[LOG] GRAVITY with Particle mode ENABLED") if particle_gravity else print("[LOG] GRAVITY with Particle mode ENABLED")
+                print("[LOG] GRAVITY with Particle mode ENABLED") if particle_gravity else print("[LOG] GRAVITY with Particle mode DISABLED")
             elif event.key == pygame.K_t:
                 particle_velocity_thermal_mode = not particle_velocity_thermal_mode
                 print("[LOG] VELOCITY THERMAL mode for Particle ENABLED") if particle_velocity_thermal_mode else print("[LOG] VELOCITY THERMAL mode for Particle DISABLED")
