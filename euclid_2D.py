@@ -210,7 +210,7 @@ def menu_screen(data_queue: Queue):
         font_particle_create_static_mode = font.render(f"Particle create static mode: {sim_data[3]}", True, (255,255,255))
         font_particle_gravity_mode = font.render(f"Particle gravity mode: {sim_data[4]}", True, (255,255,255))
         font_particle_velocity_thermal_mode = font.render(f"Particle velocity thermal mode: {sim_data[5]}", True, (255,255,255))
-        font_menu_help = font.render(f"--- HELP ---\nM - Particle create multi mode\nD - Particle create static draw mode\nS - Particle create static mode\nG - Particle gravity mode\nT - Particle velocity thermal mode\nP - Pause/Continue simulation\nC - Clear simulation screen\nN - Night mode on/off\nESC - Exit", True, (255,255,255))
+        font_menu_help = font.render(f"--- HELP ---\nM - Particle create multi mode\nD - Particle create static draw mode\nS - Particle create static mode\nG - Particle gravity mode\nT - Particle velocity thermal mode\nP - Pause/Continue simulation\nC - Clear simulation screen\nN - Night mode on/off\nPRTSCRN - Create sim screenshot\nESC - Exit", True, (255,255,255))
         menu_screen.blit(font_particles, (5, 10))
         menu_screen.blit(font_particle_create_multi_mode, (5, 40))
         menu_screen.blit(font_particle_create_static_draw_mode, (5, 65))
