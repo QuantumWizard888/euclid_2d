@@ -224,7 +224,7 @@ def menu_screen(data_queue: Queue):
     pygame.init()
     menu_screen_bg_colour = (28, 61, 71)
     menu_screen_width = 290
-    menu_screen_height = 530
+    menu_screen_height = 560
     menu_screen = pygame.display.set_mode((menu_screen_width, menu_screen_height))
     font = pygame.font.SysFont("Calibri", 18)
     clock = pygame.time.Clock()
@@ -247,7 +247,7 @@ def menu_screen(data_queue: Queue):
         font_particle_force_field_mode = font.render(f"Particle hold mode: {sim_data[6]}", True, (255,255,255))
         font_force = font.render(f"Force: {sim_data[7]}", True, (255,255,255))
         font_force_field_radius = font.render(f"Force field radius: {sim_data[8]}", True, (255,255,255))
-        font_menu_help = font.render(f"--- HELP ---\nM - Particle create multi mode\nD - Particle create static draw mode\nS - Particle create static mode\nG - Particle gravity mode\nT - Particle velocity thermal mode\nP - Pause/Continue simulation\nC - Clear simulation screen\nN - Night mode on/off\nPRTSCRN - Create sim screenshot\nH - Force field mode on/off\nESC - Exit", True, (255,255,255))
+        font_menu_help = font.render(f"--- HELP ---\nM - Particle create multi mode\nD - Particle create static draw mode\nS - Particle create static mode\nG - Particle gravity mode\nT - Particle velocity thermal mode\nP - Pause/Continue simulation\nC - Clear simulation screen\nN - Night mode on/off\nPRTSCRN - Create sim screenshot\nH - Force field mode on/off\n+ Force field radius increase\n- Force field radius decrease\nESC - Exit", True, (255,255,255))
         menu_screen.blit(font_particles, (5, 10))
         menu_screen.blit(font_particle_create_multi_mode, (5, 40))
         menu_screen.blit(font_particle_create_static_draw_mode, (5, 65))

@@ -8,6 +8,8 @@ Small particles simulation sandbox with physics. Created using Pygame.
 
 [Demonstration video #2](https://files.catbox.moe/5zxw5e.mp4)
 
+[Force field demo video #3](https://files.catbox.moe/nx7u9p.mp4)
+
 ### ⭐ Feautures
 * Multiple particles creation with collision physics
 * Gravity mode
