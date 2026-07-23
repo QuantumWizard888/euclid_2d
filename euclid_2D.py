@@ -145,8 +145,8 @@ class Particle():
             self.velocity_y += gravity
         # <--- Force field mode calculations
         if particle_force_field_mode:
-            pos_mouse_vector = pygame.math.Vector2(pygame.mouse.get_pos())
-            particle_to_mouse_vector = pos_mouse_vector - pygame.math.Vector2(p.pos_x, p.pos_y)
+            pos_mouse = pygame.math.Vector2(pygame.mouse.get_pos())
+            particle_to_mouse_vector = pos_mouse - pygame.math.Vector2(p.pos_x, p.pos_y)
             particle_to_mouse_distance = particle_to_mouse_vector.length()
 
             if 0 < particle_to_mouse_distance < force_field_radius:
