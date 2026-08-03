@@ -30,6 +30,3 @@ And then run the script:
 ```
 python3 euclid_2d.py
 ```
-
-### 💡📌 To Do
-* Add fluid simulation
