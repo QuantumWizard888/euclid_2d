@@ -19,6 +19,7 @@ force = 5
 particle_velocity_thermal_mode = False
 night_mode = False
 particle_force_field_mode = False
+particle_zero_field_mode = False
 
 # <--- Check if the engine is stopping
 def check_engine_events(particles: list, screen):
@@ -32,6 +33,8 @@ def check_engine_events(particles: list, screen):
     global night_mode
     global particle_force_field_mode
     global force_field_radius
+    global force
+    global particle_zero_field_mode
 
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN and engine_is_running:
@@ -77,18 +80,21 @@ def check_engine_events(particles: list, screen):
                 particle_create_static_draw_mode = False
                 particle_create_static_mode = False
                 particle_force_field_mode = False
+                particle_zero_field_mode = False
                 particle_create_multi_mode = not particle_create_multi_mode
                 print("[LOG] MULTIPLE Particle creation mode ENABLED") if particle_create_multi_mode else print("[LOG] MULTIPLE Particle creation mode DISABLED")
             elif event.key == pygame.K_d:
                 particle_create_multi_mode = False
                 particle_create_static_mode = False
                 particle_force_field_mode = False
+                particle_zero_field_mode = False
                 particle_create_static_draw_mode = not particle_create_static_draw_mode
                 print("[LOG] STATIC Particle draw mode ENABLED") if particle_create_static_draw_mode else print("[LOG] STATIC Particle draw mode DISABLED")
             elif event.key == pygame.K_s:
                 particle_create_multi_mode = False
                 particle_create_static_draw_mode = False
                 particle_force_field_mode = False
+                particle_zero_field_mode = False
                 particle_create_static_mode = not particle_create_static_mode
                 print("[LOG] STATIC Particle mode ENABLED") if particle_create_static_mode else print("[LOG] STATIC Particle mode DISABLED")
             elif event.key == pygame.K_g:
@@ -100,20 +106,36 @@ def check_engine_events(particles: list, screen):
             elif event.key == pygame.K_n:
                 night_mode = not night_mode
                 print("[LOG] NIGHT MODE ENABLED") if night_mode else print("[LOG] NIGHT MODE DISABLED")
-            elif event.key == pygame.K_h:
+            elif event.key == pygame.K_f:
                 particle_create_multi_mode = False
                 particle_create_static_mode = False
                 particle_create_static_draw_mode = False
+                particle_zero_field_mode = False
                 particle_force_field_mode = not particle_force_field_mode
-                print(f"[LOG] HOLD MODE for Particles ENABLED") if particle_force_field_mode else print(f"[LOG] HOLD MODE for Particles DISABLED")
+                print(f"[LOG] FORCE FIELD MODE for Particles ENABLED") if particle_force_field_mode else print(f"[LOG] FORCE FIELD MODE for Particles DISABLED")
             elif event.key == pygame.K_EQUALS:
-                if particle_force_field_mode and force_field_radius < 500:
+                if (particle_force_field_mode or particle_zero_field_mode) and force_field_radius < 500:
                     force_field_radius += 10
                     print(f"[LOG] FORCE FIELD radius increased by 10 ({force_field_radius})")
             elif event.key == pygame.K_MINUS:
-                if particle_force_field_mode and force_field_radius > 50:
+                if (particle_force_field_mode or particle_zero_field_mode) and force_field_radius > 50:
                     force_field_radius -= 10
                     print(f"[LOG] FORCE FIELD radius decreased by 10 ({force_field_radius})")
+            elif event.key == pygame.K_RIGHTBRACKET:
+                if particle_force_field_mode and force < 10:
+                    force += 1
+                    print(f"[LOG] FORCE increased by 1 ({force})")
+            elif event.key == pygame.K_LEFTBRACKET:
+                if particle_force_field_mode and force > -10:
+                    force -= 1
+                    print(f"[LOG] FORCE decreased by 1 ({force})")
+            elif event.key == pygame.K_z:
+                particle_create_multi_mode = False
+                particle_create_static_mode = False
+                particle_create_static_draw_mode = False
+                particle_force_field_mode = False
+                particle_zero_field_mode = not particle_zero_field_mode
+                print(f"[LOG] ZERO FIELD MODE for Particles ENABLED") if particle_zero_field_mode else print(f"[LOG] FABRIC MODE for Particles DISABLED")
             elif event.key == pygame.K_PRINTSCREEN:
                 name = f"euclid2d_screenshot_{datetime.now().strftime("%Y%m%d%H%M%S")}.png"
                 pygame.image.save(screen, name)
@@ -140,12 +162,12 @@ class Particle():
     def p_draw(self, screen):
         pygame.draw.circle(screen, self.colour, [self.pos_x, self.pos_y], self.radius)
 
-    def p_move(self):
+    def p_move(self, mouse_pos, mouse_rel, pos_mouse_vector):
         if particle_gravity:
             self.velocity_y += gravity
         # <--- Force field mode calculations
         if particle_force_field_mode:
-            pos_mouse_vector = pygame.math.Vector2(pygame.mouse.get_pos())
+            #pos_mouse_vector = pygame.math.Vector2(pygame.mouse.get_pos())
             particle_to_mouse_vector = pos_mouse_vector - pygame.math.Vector2(self.pos_x, self.pos_y)
             particle_to_mouse_distance = particle_to_mouse_vector.length()
 
@@ -154,6 +176,18 @@ class Particle():
                 self.velocity_x += particle_to_mouse_vector.x
                 self.velocity_y += particle_to_mouse_vector.y
         
+        # <--- Zero mode calculations
+        if particle_zero_field_mode:
+            particle_to_mouse_vector = pygame.math.Vector2(self.pos_x, self.pos_y) - pos_mouse_vector
+            particle_to_mouse_distance = particle_to_mouse_vector.length()
+
+            if 0 < particle_to_mouse_distance < force_field_radius:    
+                self.velocity_x = mouse_rel[0]
+                self.velocity_y = mouse_rel[1]                
+                self.pos_x = mouse_pos[0] + particle_to_mouse_vector.x
+                self.pos_y = mouse_pos[1] + particle_to_mouse_vector.y
+
+
         self.pos_x += self.velocity_x
         self.pos_y += self.velocity_y
         
@@ -221,10 +255,11 @@ class Particle():
 # <--- Menu Screen initializing
 def menu_screen(data_queue: Queue):
     os.environ['SDL_VIDEO_WINDOW_POS'] = "1630, 50"
+    menu_screen_help_string = f"--- HELP ---\nM - Particle create multi mode\nD - Particle create static draw mode\nS - Particle create static mode\nG - Particle gravity mode\nT - Particle velocity thermal mode\nP - Pause/Continue simulation\nC - Clear simulation screen\nN - Night mode on/off\nH - Force field mode on/off\nF - Zero field mode on/off\n+ Force field radius increase\n- Force field radius decrease\n[ Force decrease\n] Force increase\nPRTSCRN - Create sim screenshot\nESC - Exit"
     pygame.init()
     menu_screen_bg_colour = (28, 61, 71)
     menu_screen_width = 290
-    menu_screen_height = 560
+    menu_screen_height = 660
     menu_screen = pygame.display.set_mode((menu_screen_width, menu_screen_height))
     font = pygame.font.SysFont("Calibri", 18)
     clock = pygame.time.Clock()
@@ -244,10 +279,11 @@ def menu_screen(data_queue: Queue):
         font_particle_create_static_mode = font.render(f"Particle create static mode: {sim_data[3]}", True, (255,255,255))
         font_particle_gravity_mode = font.render(f"Particle gravity mode: {sim_data[4]}", True, (255,255,255))
         font_particle_velocity_thermal_mode = font.render(f"Particle velocity thermal mode: {sim_data[5]}", True, (255,255,255))
-        font_particle_force_field_mode = font.render(f"Particle hold mode: {sim_data[6]}", True, (255,255,255))
-        font_force = font.render(f"Force: {sim_data[7]}", True, (255,255,255))
-        font_force_field_radius = font.render(f"Force field radius: {sim_data[8]}", True, (255,255,255))
-        font_menu_help = font.render(f"--- HELP ---\nM - Particle create multi mode\nD - Particle create static draw mode\nS - Particle create static mode\nG - Particle gravity mode\nT - Particle velocity thermal mode\nP - Pause/Continue simulation\nC - Clear simulation screen\nN - Night mode on/off\nH - Force field mode on/off\n+ Force field radius increase\n- Force field radius decrease\nPRTSCRN - Create sim screenshot\nESC - Exit", True, (255,255,255))
+        font_particle_force_field_mode = font.render(f"Particle force field mode: {sim_data[6]}", True, (255,255,255))
+        font_particle_zero_field_mode = font.render(f"Particle zero field mode: {sim_data[7]}", True, (255,255,255))
+        font_force = font.render(f"Force: {sim_data[8]}", True, (255,255,255))
+        font_force_field_radius = font.render(f"Force field radius: {sim_data[9]}", True, (255,255,255))
+        font_menu_help = font.render(menu_screen_help_string, True, (255,255,255))
         menu_screen.blit(font_particles, (5, 10))
         menu_screen.blit(font_particle_create_multi_mode, (5, 40))
         menu_screen.blit(font_particle_create_static_draw_mode, (5, 65))
@@ -255,9 +291,10 @@ def menu_screen(data_queue: Queue):
         menu_screen.blit(font_particle_gravity_mode, (5, 115))
         menu_screen.blit(font_particle_velocity_thermal_mode, (5, 140))
         menu_screen.blit(font_particle_force_field_mode, (5, 165))
-        menu_screen.blit(font_force, (5, 190))
-        menu_screen.blit(font_force_field_radius, (5, 215))
-        menu_screen.blit(font_menu_help, (5, 250))
+        menu_screen.blit(font_particle_zero_field_mode, (5, 190))
+        menu_screen.blit(font_force, (5, 213))
+        menu_screen.blit(font_force_field_radius, (5, 235))
+        menu_screen.blit(font_menu_help, (5, 275))
         pygame.display.flip()
         clock.tick(60)
         pygame.display.set_caption(f"Euclid 2D")
@@ -281,6 +318,10 @@ if __name__ == "__main__":
     fps_diff = 0
     # <--- Main game engine loop
     while True:
+        # <--- Getting mouse position, velocity and vector for Force field mode and Zero mode
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_rel = pygame.mouse.get_rel()
+        pos_mouse_vector = pygame.math.Vector2(mouse_pos)
         check_engine_events(particles=particles, screen=screen)
         # <--- Night mode for GUI on/off
         if night_mode:
@@ -300,7 +341,7 @@ if __name__ == "__main__":
                     p.colour[0] = int(255*velocity_normalized)
                     p.colour[1] = 0
                     p.colour[2] = int(255*(1-velocity_normalized))
-                p.p_move()
+                p.p_move(mouse_pos = mouse_pos, mouse_rel = mouse_rel, pos_mouse_vector = pos_mouse_vector)
                 cell_p = (int(p.pos_x//60), int(p.pos_y//60))
                 if cell_p not in grid_cell:
                     grid_cell[cell_p] = []
@@ -316,13 +357,13 @@ if __name__ == "__main__":
 
             for p in particles:
                 p.p_draw(screen)
-            if particle_force_field_mode:
+            if particle_force_field_mode or particle_zero_field_mode:
                 pygame.draw.circle(screen, [0, 128, 0], [pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]], force_field_radius, 1)
 
             pygame.display.flip()
             clock.tick(60)
             # <--- Send data to Menu window process through queue
-            data_queue.put([len(particles), particle_create_multi_mode, particle_create_static_draw_mode, particle_create_static_mode, particle_gravity, particle_velocity_thermal_mode, particle_force_field_mode, force, force_field_radius])
+            data_queue.put([len(particles), particle_create_multi_mode, particle_create_static_draw_mode, particle_create_static_mode, particle_gravity, particle_velocity_thermal_mode, particle_force_field_mode, particle_zero_field_mode, force, force_field_radius])
             # <--- Simulation window header info
             pygame.display.set_caption(f"Euclid 2D Simulation FPS: {round(clock.get_fps(), 3)}, Max FPS Diff: {round(fps_diff, 3)}% Particles: {len(particles)}")
             # <--- FPS diff info in the Simulation window header

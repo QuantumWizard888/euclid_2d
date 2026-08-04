@@ -13,7 +13,8 @@ Small particles simulation sandbox with physics. Created using Pygame.
 ### ⭐ Feautures
 * Multiple particles creation with collision physics
 * Gravity mode
-* Force field mode for particles (with an option to increase/decrease Force field radius)
+* Force field mode for particles (with an option to increase/decrease Force field radius and Force value)
+* Zero field mode for particles (it makes particles freeze)
 * Thermal velocity mode where particle colour depends on its velocity
 * Push other particles with manual single particle control
 * Pause simulation
