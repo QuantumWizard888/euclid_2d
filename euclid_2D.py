@@ -176,7 +176,7 @@ class Particle():
                 self.velocity_x += particle_to_mouse_vector.x
                 self.velocity_y += particle_to_mouse_vector.y
         
-        # <--- Zero mode calculations
+        # <--- Zero field mode calculations
         if particle_zero_field_mode:
             particle_to_mouse_vector = pygame.math.Vector2(self.pos_x, self.pos_y) - pos_mouse_vector
             particle_to_mouse_distance = particle_to_mouse_vector.length()
